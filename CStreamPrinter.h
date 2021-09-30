@@ -49,7 +49,7 @@ public:
   template <typename T>
   static void print(ostream& os, const T& val)
   {
-	os << val;
+    os << val;
   }
   /**
    * T type pointer stream print
@@ -60,10 +60,10 @@ public:
   template <typename T>
   static void print(ostream& os, const T* valptr)
   {
-	if (valptr)
-	  os << val;
+    if (valptr)
+      os << val;
     else
-	  os << "nullptr";
+      os << "nullptr";
   }
   /**
    * T type vector stream print
@@ -74,13 +74,13 @@ public:
   template <typename T>
   static void print(ostream& os, vector<T>& vec)
   {
-	os << "[ ";
-	for (auto i = vec.begin(); i != vec.end(); ++i)
-	{
-	  CStreamPrinter::print(os, *i);
-	  os << " ";
-	}
-	os << "]";
+    os << "[ ";
+    for (auto i = vec.begin(); i != vec.end(); ++i)
+    {
+      CStreamPrinter::print(os, *i);
+      os << " ";
+    }
+    os << "]";
   }
   /**
    * T pointer type vector stream print
@@ -91,13 +91,13 @@ public:
   template <typename T>
   static void print(ostream& os, vector<T*>& vec)
   {
-	os << "[ ";
-	for (auto i = vec.begin(); i != vec.end(); ++i)
-	{
+    os << "[ ";
+    for (auto i = vec.begin(); i != vec.end(); ++i)
+    {
       CStreamPrinter::print(os, *i);
-	  os << " ";
-	}
-	os << "]";
+      os << " ";
+    }
+    os << "]";
   }
   /**
    * K key type and V value type map stream print
@@ -108,16 +108,16 @@ public:
   template <typename K, typename V>
   static void print(ostream& os, map<K, V>& kvs)
   {
-	os << "{";
-	for (auto i = kvs.begin(); i != kvs.end(); ++i)
-	{
-	  os << "  ";
+    os << "{";
+    for (auto i = kvs.begin(); i != kvs.end(); ++i)
+    {
+      os << "  ";
       CStreamPrinter::print(os, i->first);
-	  os << " : ";
+      os << " : ";
       CStreamPrinter::print(os, i->second);
-	  os << "\n";
-	}
-	os << "}\n";
+      os << "\n";
+    }
+    os << "}\n";
   }
   /**
    * T type set stream print
@@ -128,13 +128,13 @@ public:
   template <typename T>
   static void print(ostream& os, set<T>& st)
   {
-	os << "( ";
-	for (auto i = st.begin(); i != st.end(); ++i)
-	{
-	  CStreamPrinter::print(os, *i);
-	  os << " ";
-	}
-	os << ")";
+    os << "( ";
+    for (auto i = st.begin(); i != st.end(); ++i)
+    {
+      CStreamPrinter::print(os, *i);
+      os << " ";
+    }
+    os << ")";
   }
   /**
    * T type initializer_list stream print
@@ -145,13 +145,13 @@ public:
   template <typename T>
   static void print(ostream& os, initailizer_list<T>& il)
   {
-	os << "<I ";
-	for (auto i = il.begin(); i != il.end(); ++i)
-	{
-	  CStreamPrinter::print(os, *i);
-	  os << " ";
-	}
-	os << "I>";
+    os << "<I ";
+    for (auto i = il.begin(); i != il.end(); ++i)
+    {
+      CStreamPrinter::print(os, *i);
+      os << " ";
+    }
+    os << "I>";
   }
   /**
    * T pointer type initializer_list stream print
@@ -162,13 +162,13 @@ public:
   template <typename T>
   static void print(ostream& os, initailizer_list<T*>& ilist)
   {
-	os << "<I ";
-	for (auto i = ilist.begin(); i != ilist.end(); ++i)
-	{
+    os << "<I ";
+    for (auto i = ilist.begin(); i != ilist.end(); ++i)
+    {
       CStreamPrinter::print(os, *i);
-	  os << " ";
-	}
-	os << "I>";
+      os << " ";
+    }
+    os << "I>";
   }
 
 public:
@@ -181,14 +181,14 @@ public:
   template <typename T>
   static void print(ostream& os, const char* fmt)
   {
-	for ( ; *fmt; ++fmt)
-	{
-	  if (*fmt == '%' && *(fmt + 1) == '%')
-	  {
-		++fmt;
-	  }
-	  os << *fmt;
-	}
+    for ( ; *fmt; ++fmt)
+    {
+      if (*fmt == '%' && *(fmt + 1) == '%')
+      {
+        ++fmt;
+      }
+      os << *fmt;
+    }
   }
 
   /**
@@ -202,26 +202,26 @@ public:
   template <typename T, typename... TS>
   static void printf(ostream& os, const char* fmt, const T& aVal, const TS...& args)
   {
-	for ( ; *fmt; ++fmt)
-	{
-	  if (*fmt == '%')
-	  {
-		// "%%" -> print %
-		if (*(fmt + 1) == '%')
-		{
-		  ++fmt;
-		}
-		// print current value and call print recusively
-		else
-		{
-          CStreamPrinter::print(os, val);
-		  // recursive call with remained args
-          CStreamPrinter::print(os, fmt + 1, args...);
-		  return;
-		}
-	  }
-	  os << *fmt;
-	}
+  for ( ; *fmt; ++fmt)
+  {
+    if (*fmt == '%')
+    {
+      // "%%" -> print %
+      if (*(fmt + 1) == '%')
+      {
+        ++fmt;
+      }
+      // print current value and call print recusively
+      else
+      {
+        CStreamPrinter::print(os, val);
+        // recursive call with remained args
+        CStreamPrinter::print(os, fmt + 1, args...);
+        return;
+      }
+    }
+    os << *fmt;
+  }
   }
 };
 
