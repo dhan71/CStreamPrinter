@@ -9,20 +9,14 @@
  * gprint("Hello, %s!", "dhan") -> "Hello, dhan!"
  *****************************************************************************/
 
-#include <initializer_list>
-#include <iostream>
-#include <sstream>
 #include <vector>
 #include <map>
 #include <set>
+#include <iostream>
+#include <sstream>
+#include <initializer_list>
+#include <type_traits>
 
-using std::ostream;
-using std::stringstream;
-using std::vector;
-using std::map;
-using std::set;
-using std::initailizer_list;
-using std::cout;
 
 class CStreamPrinter
 {
@@ -34,23 +28,12 @@ public:
    * @param     args    variable type values
    */
   template <typename T, typename... TS>
-  static void print(ostream& os, const T& val, const TS&... args)
+  static void print(std::ostream& os, const T& val, const TS&... args)
   {
     CStreamPrinter::print(os, val);
-    CStreamPrinter::print(os, args);
+    CStreamPrinter::print(os, args...);
   }
 
-  /**
-   * T type value stream print
-   * - print base function
-   * @param     os      output stream
-   * @param     val     output value
-   */
-  template <typename T>
-  static void print(ostream& os, const T& val)
-  {
-    os << val;
-  }
   /**
    * T type pointer stream print
    * - print base function
@@ -58,13 +41,27 @@ public:
    * @param     val     output value
    */
   template <typename T>
-  static void print(ostream& os, const T* valptr)
+  static void print(std::ostream& os, const T& val)
   {
-    if (valptr)
+    if (to_pointer(val))
+  		os << *to_pointer(val);
+  	else
+  		os << "nullptr";
+  }
+  /**
+   * T type pointer stream print
+   * - print base function
+   * @param     os      output stream
+   * @param     val     output value
+   */
+  static void print(std::ostream& os, const char* val)
+  {
+    if (val)
       os << val;
     else
       os << "nullptr";
   }
+
   /**
    * T type vector stream print
    * - print base function
@@ -72,7 +69,7 @@ public:
    * @param     vec     vector of T type
    */
   template <typename T>
-  static void print(ostream& os, vector<T>& vec)
+  static void print(std::ostream& os, const std::vector<T>& vec)
   {
     os << "[ ";
     for (auto i = vec.begin(); i != vec.end(); ++i)
@@ -89,7 +86,7 @@ public:
    * @param     vec     vector of T pointer type
    */
   template <typename T>
-  static void print(ostream& os, vector<T*>& vec)
+  static void print(std::ostream& os, std::vector<T*>& vec)
   {
     os << "[ ";
     for (auto i = vec.begin(); i != vec.end(); ++i)
@@ -99,26 +96,7 @@ public:
     }
     os << "]";
   }
-  /**
-   * K key type and V value type map stream print
-   * - print base function
-   * @param     os      output stream
-   * @param     kvs     K key, V value map
-   */
-  template <typename K, typename V>
-  static void print(ostream& os, map<K, V>& kvs)
-  {
-    os << "{";
-    for (auto i = kvs.begin(); i != kvs.end(); ++i)
-    {
-      os << "  ";
-      CStreamPrinter::print(os, i->first);
-      os << " : ";
-      CStreamPrinter::print(os, i->second);
-      os << "\n";
-    }
-    os << "}\n";
-  }
+
   /**
    * T type set stream print
    * - print base function
@@ -126,7 +104,7 @@ public:
    * @param     st      set of T type
    */
   template <typename T>
-  static void print(ostream& os, set<T>& st)
+  static void print(std::ostream& os, const std::set<T>& st)
   {
     os << "( ";
     for (auto i = st.begin(); i != st.end(); ++i)
@@ -137,21 +115,39 @@ public:
     os << ")";
   }
   /**
+   * T pointer type set stream print
+   * - print base function
+   * @param     os      output stream
+   * @param     st      set of T type
+   */
+  template <typename T>
+  static void print(std::ostream& os, const std::set<T*>& st)
+  {
+    os << "( ";
+    for (auto i = st.begin(); i != st.end(); ++i)
+    {
+      CStreamPrinter::print(os, *i);
+      os << " ";
+    }
+    os << ")";
+  }
+
+  /**
    * T type initializer_list stream print
    * - print base function
    * @param     os      output stream
    * @param     il      initializer_list of T type
    */
   template <typename T>
-  static void print(ostream& os, initailizer_list<T>& il)
+  static void print(std::ostream& os, const std::initializer_list<T>& il)
   {
-    os << "<I ";
+    os << "< ";
     for (auto i = il.begin(); i != il.end(); ++i)
     {
       CStreamPrinter::print(os, *i);
       os << " ";
     }
-    os << "I>";
+    os << ">";
   }
   /**
    * T pointer type initializer_list stream print
@@ -160,16 +156,56 @@ public:
    * @param     il      initializer_list of T pointer type
    */
   template <typename T>
-  static void print(ostream& os, initailizer_list<T*>& ilist)
+  static void print(std::ostream& os, const std::initializer_list<T*>& ilist)
   {
-    os << "<I ";
+    os << "< ";
     for (auto i = ilist.begin(); i != ilist.end(); ++i)
     {
       CStreamPrinter::print(os, *i);
       os << " ";
     }
-    os << "I>";
+    os << ">";
   }
+
+  /**
+   * K key type and V value type map stream print
+   * - print base function
+   * @param     os      output stream
+   * @param     kvs     K key, V value map
+   */
+  template <typename K, typename V>
+  static void print(std::ostream& os, const std::map<K, V>& kvs)
+  {
+    os << "{\n";
+    for (auto i = kvs.begin(); i != kvs.end(); ++i)
+    {
+      os << "  ";
+      CStreamPrinter::print(os, i->first);
+      os << " : ";
+      CStreamPrinter::print(os, i->second);
+      os << "\n";
+    }
+    os << "}\n";
+  }
+
+private:
+  /**
+   * reference -> pointer
+   */
+  template <typename T>
+  static T* to_pointer(T& a)
+  {
+    return &a;
+  }
+  /**
+   * pointer -> pointer
+   */
+  template <typename T>
+  static T* to_pointer(T* a)
+  {
+    return a;
+  }
+
 
 public:
   /**
@@ -178,8 +214,7 @@ public:
    * @param     os      output stream
    * @param     fmt     format
    */
-  template <typename T>
-  static void print(ostream& os, const char* fmt)
+  static void printf(std::ostream& os, const char* fmt)
   {
     for ( ; *fmt; ++fmt)
     {
@@ -200,28 +235,29 @@ public:
    * @exam      ("%%A%B%", 1, "S") -> %A1BS
    */
   template <typename T, typename... TS>
-  static void printf(ostream& os, const char* fmt, const T& aVal, const TS...& args)
-  {
-  for ( ; *fmt; ++fmt)
-  {
-    if (*fmt == '%')
-    {
-      // "%%" -> print %
-      if (*(fmt + 1) == '%')
-      {
-        ++fmt;
-      }
-      // print current value and call print recusively
-      else
-      {
-        CStreamPrinter::print(os, val);
-        // recursive call with remained args
-        CStreamPrinter::print(os, fmt + 1, args...);
-        return;
-      }
-    }
-    os << *fmt;
-  }
+  static void printf(std::ostream& os, const char* fmt, const T& val, const TS&... args)
+	{
+		//std::cout << "printf: args=" << sizeof...(args) << endl;
+		for ( ; *fmt; ++fmt)
+		{
+			if (*fmt == '%')
+			{
+				// "%%" -> print %
+				if (*(fmt + 1) == '%')
+				{
+					++fmt;
+				}
+				// print current value and call printf recusively
+				else
+				{
+					CStreamPrinter::print(os, val);
+					// recursive call with remained args
+					CStreamPrinter::printf(os, fmt + 1, args...);
+					return;
+				}
+			}
+			os << *fmt;
+		}
   }
 };
 
@@ -236,7 +272,7 @@ public:
 template <typename... TS>
 inline void gprintf(const char* fmt, const TS&... args)
 {
-  CStreamPrinter::printf(cout, fmt, args...);
+  CStreamPrinter::printf(std::cout, fmt, args...);
 }
 
 /**
@@ -248,7 +284,7 @@ inline void gprintf(const char* fmt, const TS&... args)
 template <typename... TS>
 inline void gprint(const TS&... args)
 {
-  CStreamPrinter::print(cout, args...);
+  CStreamPrinter::print(std::cout, args...);
 }
 
 /**
@@ -258,9 +294,9 @@ inline void gprint(const TS&... args)
  * @param     il      T type list
  */
 template <typename T>
-inline void gprint(initializer_list<T> il)
+inline void gprint(const std::initializer_list<T> il)
 {
-  CStreamPrinter::print(cout, il);
+  CStreamPrinter::print(std::cout, il);
 }
 
 /**
@@ -272,9 +308,9 @@ inline void gprint(initializer_list<T> il)
  * @exam      ("%%A%B%", 1, "S") -> %A1BS
  */
 template <typename... TS>
-inline string gsprintf(const char* fmt, const TS&... args)
+inline std::string gsprintf(const char* fmt, const TS&... args)
 {
-  stringstream ss;
+	std::stringstream ss;
   CStreamPrinter::printf(ss, fmt, args...);
   return ss.str();
 }
@@ -285,9 +321,9 @@ inline string gsprintf(const char* fmt, const TS&... args)
  * @param     args    variable type arguments
  */
 template <typename... TS>
-inline string gsprint(const TS&... args)
+inline std::string gsprint(const TS&... args)
 {
-  stringstream ss;
+	std::stringstream ss;
   CStreamPrinter::print(ss, args...);
   return ss.str();
 }
@@ -298,10 +334,10 @@ inline string gsprint(const TS&... args)
  * @param     il      T type list
  */
 template <typename T>
-inline string gsprint(initializer_list<T> ilist)
+inline std::string gsprint(const std::initializer_list<T> il)
 {
-  stringstream ss;
-  CStreamPrinter::print(ss, ilist);
+	std::stringstream ss;
+  CStreamPrinter::print(ss, il);
   return ss.str();
 }
 
