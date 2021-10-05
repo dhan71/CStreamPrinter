@@ -44,9 +44,9 @@ public:
   static void print(std::ostream& os, const T& val)
   {
     if (to_pointer(val))
-  		os << *to_pointer(val);
-  	else
-  		os << "nullptr";
+      os << *to_pointer(val);
+    else
+      os << "nullptr";
   }
   /**
    * T type pointer stream print
@@ -236,28 +236,28 @@ public:
    */
   template <typename T, typename... TS>
   static void printf(std::ostream& os, const char* fmt, const T& val, const TS&... args)
-	{
-		//std::cout << "printf: args=" << sizeof...(args) << endl;
-		for ( ; *fmt; ++fmt)
-		{
-			if (*fmt == '%')
-			{
-				// "%%" -> print %
-				if (*(fmt + 1) == '%')
-				{
-					++fmt;
-				}
-				// print current value and call printf recusively
-				else
-				{
-					CStreamPrinter::print(os, val);
-					// recursive call with remained args
-					CStreamPrinter::printf(os, fmt + 1, args...);
-					return;
-				}
-			}
-			os << *fmt;
-		}
+  {
+    //std::cout << "printf: args=" << sizeof...(args) << endl;
+    for ( ; *fmt; ++fmt)
+    {
+      if (*fmt == '%')
+      {
+        // "%%" -> print %
+        if (*(fmt + 1) == '%')
+        {
+          ++fmt;
+        }
+        // print current value and call printf recusively
+        else
+        {
+          CStreamPrinter::print(os, val);
+          // recursive call with remained args
+          CStreamPrinter::printf(os, fmt + 1, args...);
+          return;
+        }
+      }
+      os << *fmt;
+    }
   }
 };
 
@@ -310,7 +310,7 @@ inline void gprint(const std::initializer_list<T> il)
 template <typename... TS>
 inline std::string gsprintf(const char* fmt, const TS&... args)
 {
-	std::stringstream ss;
+  std::stringstream ss;
   CStreamPrinter::printf(ss, fmt, args...);
   return ss.str();
 }
@@ -323,7 +323,7 @@ inline std::string gsprintf(const char* fmt, const TS&... args)
 template <typename... TS>
 inline std::string gsprint(const TS&... args)
 {
-	std::stringstream ss;
+  td::stringstream ss;
   CStreamPrinter::print(ss, args...);
   return ss.str();
 }
@@ -336,7 +336,7 @@ inline std::string gsprint(const TS&... args)
 template <typename T>
 inline std::string gsprint(const std::initializer_list<T> il)
 {
-	std::stringstream ss;
+  td::stringstream ss;
   CStreamPrinter::print(ss, il);
   return ss.str();
 }
