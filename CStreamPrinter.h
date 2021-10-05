@@ -323,7 +323,7 @@ inline std::string gsprintf(const char* fmt, const TS&... args)
 template <typename... TS>
 inline std::string gsprint(const TS&... args)
 {
-  td::stringstream ss;
+  std::stringstream ss;
   CStreamPrinter::print(ss, args...);
   return ss.str();
 }
@@ -336,7 +336,7 @@ inline std::string gsprint(const TS&... args)
 template <typename T>
 inline std::string gsprint(const std::initializer_list<T> il)
 {
-  td::stringstream ss;
+  std::stringstream ss;
   CStreamPrinter::print(ss, il);
   return ss.str();
 }
