@@ -1,4 +1,5 @@
-# I'm poor at English
+# C++ Stream Printer (screen or string)
+I'm poor at English
 
 This project is written in c++.
 
