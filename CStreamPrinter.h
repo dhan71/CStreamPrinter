@@ -16,6 +16,7 @@
 #include <sstream>
 #include <initializer_list>
 #include <type_traits>
+#include <memory>
 
 
 class CStreamPrinter
@@ -60,6 +61,17 @@ public:
       os << val;
     else
       os << "nullptr";
+  }
+  /**
+   * T type pointer stream print
+   * - print base function
+   * @param     os      output stream
+   * @param     val     output value
+   */
+  template <typename T>
+  static void print(std::ostream& os, const std::shared_ptr<T>& val)
+  {
+    os << *val;
   }
 
   /**

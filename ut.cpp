@@ -335,12 +335,12 @@ BOOST_AUTO_TEST_CASE(test_set_intp)
   si1.insert(i3);
   string r = gsprint(si1);
   cout << "r1=|" << r << "|" << endl;
-  BOOST_ASSERT(r == "( 100 200 300 )");
+  BOOST_ASSERT(r == "( 100 300 200 )");
 
   set<int*> si2 { i1, i2, i3 };
   r = gsprint(si2);
   cout << "r2=|" << r << "|" << endl;
-  BOOST_ASSERT(r == "( 100 200 300 )");
+  BOOST_ASSERT(r == "( 100 300 200 )");
 }
 BOOST_AUTO_TEST_CASE(test_set_charp)
 {
@@ -362,5 +362,18 @@ BOOST_AUTO_TEST_CASE(test_set_charp)
   r = gsprint(ss5);
   cout << "r3=|" << r << "|" << endl;
   BOOST_ASSERT(r == "( nullptr ONE TWO THREE )");
+}
+BOOST_AUTO_TEST_CASE(test_shared_ptr)
+{
+  cout << "test_shared_ptr() called" << endl;
+  auto si1 = make_shared<int>(3);
+  auto si2 = make_shared<int>(30);
+  auto si3 = make_shared<int>(300);
+  auto r = gsprint(si1);
+  BOOST_ASSERT(r == "3");
+  vector<shared_ptr<int>> siv{ si1, si2, si3 };
+  r = gsprint(siv);
+  cout << "r2=|" << r << "|" << endl;
+  BOOST_ASSERT(r == "[ 3 30 300 ]");
 }
 
